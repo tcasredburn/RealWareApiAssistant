@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RealwareApiAssistant": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\sredburn\\source\\repos_shared\\RealWareApiAssistant\\Example Scripts\\1 - Update Accounts to Cost\\script_1.json"
+    }
+  }
+}

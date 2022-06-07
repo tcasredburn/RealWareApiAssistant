@@ -1,0 +1,55 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "http://asrwiis/Test/EncompassAPI",
+    "Token": "MjAyNDA1OUMtQjU1QS00RUY0LTkxODItQzQ1QTk1MDMzMzND"
+  },
+  "ApiOperation": "/api/improvements/{accountNo}/{impNo}/{taxYear}",
+  "Method": "PUT",
+  
+  "ExcelFile": "script_1_data.xlsx",
+  "IdColumns": [
+    {
+      "IdName": "{accountNo}",
+      "ColumnValue": "ACCOUNTNO"
+    },
+	{
+      "IdName": "{impNo}",
+      "ColumnValue": "IMPNO"
+    },
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2022"
+    }
+  ],
+  "ValueChanges": [
+    {
+      "Path": "",
+      "RealWareColumn": "ApproachType",
+      "ToValue": "Cost"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "CostMethod",
+      "ToValue": "RCNLD"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "Appraiser",
+      "ToValue": "553"
+    },
+    {
+	  "Path": "",
+	  "RealWareColumn": "AppraisalDate",
+	  "ToValue": "6/7/2022"
+    }
+  ],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": false,
+  "SkipWarningPrompts": false,
+  "RetryImmediatelyAfterBadRequest": true
+}
+
+
+
