@@ -1,0 +1,153 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "http://asrwiis/Test/EncompassAPI",
+    "Token": "MjAyNDA1OUMtQjU1QS00RUY0LTkxODItQzQ1QTk1MDMzMzND"
+  },
+  "ApiOperation": "/api/permits/{taxYear}",
+  "Method": "POST",
+  
+  "ExcelFile": "script_3_data.xlsx",
+  "IdColumns": [
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2022"
+    }
+  ],
+  "ValueChanges": [],
+  "ValueInserts": [
+    {
+	  "Path": "",
+      "RealWareColumn": "AccountNo",
+      "ExcelToColumn": "ACCOUNTNO"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "LocalPermitNo",
+      "ExcelToColumn": "LocalPermitNo"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitSource",
+      "ExcelToColumn": "PermitSource"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitType",
+      "ExcelToColumn": "PermitType"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitDate",
+      "ExcelToColumn": "PermitDate"
+    },
+    {
+      "Path": "",
+      "RealWareColumn": "PermitReason",
+      "ExcelToColumn": "PermitReason"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitReasonDetail",
+      "ExcelToColumn": "PermitReasonDetail"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "IssuedBy",
+      "ExcelToColumn": "IssuedBy"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "ValueChangeValue",
+      "ExcelToColumn": "ValueChangeValue"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitUse",
+      "ExcelToColumn": "PermitUse"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitActiveFlag",
+      "ExcelToColumn": "PermitActiveFlag"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "ValueChangeTaxYear",
+      "ExcelToColumn": "ValueChangeTaxYear"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "ValueChangeAppliedTo",
+      "ExcelToColumn": "ValueChangeAppliedTo"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "AssignedTo",
+      "ExcelToColumn": "AssignedTo"
+    },
+	{
+      "Path": "",
+      "RealWareColumn": "PermitStatus",
+      "ExcelToColumn": "PermitStatus"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Name1",
+      "ExcelToColumn": "ApplicantName1"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Name2",
+      "ExcelToColumn": "ApplicantName2"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Phone",
+      "ExcelToColumn": "ApplicantPhone"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Address1",
+      "ExcelToColumn": "ApplicantAddress1"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Address2",
+      "ExcelToColumn": "ApplicantAddress2"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "City",
+      "ExcelToColumn": "ApplicantCity"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "StateCode",
+      "ExcelToColumn": "ApplicantState"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "Zipcode",
+      "ExcelToColumn": "ApplicantZipcode"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "PrimaryApplicantFlag",
+      "ExcelToColumn": "PrimaryApplicantFlag"
+    },
+	{
+      "Path": "Applicants",
+      "RealWareColumn": "OwnerFlag",
+      "ExcelToColumn": "OwnerFlag"
+    },
+  ],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": true,
+  "SkipWarningPrompts": true,
+  "RetryImmediatelyAfterBadRequest": true
+}
+
+
+

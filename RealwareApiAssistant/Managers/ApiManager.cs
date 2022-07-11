@@ -234,11 +234,23 @@ namespace RealwareApiAssistant.Managers
 
                 string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
 
-                string message = $"{DateTime.Now} - {idField} - {result.Message} - Total_Changes:{result.ChangeCount} Total_Inserts:{result.InsertCount} - ({index}/{changes.Count})";
+                string message = $"{DateTime.Now} - {idField} - {result.Message} - ";
+                string suffix = $" - ({index}/{changes.Count})";
                 if (result.Response.StatusDescription == "OK")
+                {
+                    message += $"Total_Changes:{result.ChangeCount} Total_Inserts:{result.InsertCount}" + suffix;
                     console.WriteSuccess(message);
+                }
+                else if (result.Response.StatusDescription == "Created")
+                {
+                    message += $"Total_Inserts:{result.InsertCount}" + suffix;
+                    console.WriteSuccess(message);
+                }
                 else
+                {
+                    message += suffix;
                     console.WriteErrorWithDetails(message, result.MessageDetail);
+                }
 
                 index++;
             }
@@ -252,6 +264,8 @@ namespace RealwareApiAssistant.Managers
                     return executeDeleteCommandToApi(change);
                 case Method.PUT:
                     return executePutCommandToApi(change);
+                case Method.POST:
+                    return executePostCommandToApi(change);
                 default:
                     console.WriteError($"'{script.Method}' methods have not been implemented!");
                     return new ApiResult();
@@ -304,43 +318,82 @@ namespace RealwareApiAssistant.Managers
             return result;
         }
 
+        private ApiResult executePostCommandToApi(ApiRequest change)
+        {
+            // Update json values from get (includes insert)
+            JObject baseJson = new JObject();
+            ApiJsonResult jsonResult = updateJsonValues(null, change);
+
+            // Update the values in RealWare via the API
+            var postRequest = buildRequest(Method.POST, change.Ids);
+            postRequest.AddJsonBody(jsonResult.Json);
+
+            var result = executeApiRequest(postRequest);
+            result.InsertCount = jsonResult.InsertCount;
+
+            return result;
+        }
+
         private ApiJsonResult updateJsonValues(dynamic json, ApiRequest change)
         {
             int valueChanges = 0;
             int valueInserts = 0;
-            JToken jsonData = JToken.Parse(json.ToString());
+            JToken? jsonData = null;
+            if (json != null)
+                jsonData = JToken.Parse(json.ToString());
 
             // Changes
-            int totalChangeCount = change.Values.Where(x=>!x.IsNew).Count();
-            foreach (var column in change.Values.FindAll(x=>!x.IsNew))
+            int totalChangeCount = change.Values.Where(x => !x.IsNew).Count();
+            if (jsonData != null)
             {
-                string path = column.Path ?? "";
-                var jTokens = jsonData.SelectTokens(path);
-
-                foreach (var jToken in jTokens)
+                foreach (var column in change.Values.FindAll(x => !x.IsNew))
                 {
-                    if ((column.FromValue != null && column.FromValue.ToString() == jToken[column.RealwarePropertyName].ToString())
-                                || column.FromValue == null)
+                    string path = column.Path ?? "";
+                    var jTokens = jsonData.SelectTokens(path);
+
+                    foreach (var jToken in jTokens)
                     {
-                        valueChanges++;
-                        jToken[column.RealwarePropertyName] = column.ToValue.ToString();
+                        if ((column.FromValue != null && column.FromValue.ToString() == jToken[column.RealwarePropertyName].ToString())
+                                    || column.FromValue == null)
+                        {
+                            valueChanges++;
+                            jToken[column.RealwarePropertyName] = column.ToValue.ToString();
+                        }
                     }
                 }
             }
 
             //Inserts
-            var insertPathList = change.Values.FindAll(x => x.IsNew).Select(x => x.Path).Distinct();
+            var insertPathList = change.Values.FindAll(x => x.IsNew).Select(x => x.Path).Distinct().OrderBy(x=>x);
             int totalInsertCount = insertPathList.Count();
             foreach (var insertPath in insertPathList)
             {
+                JToken? jToken = null;
+                string path = insertPath ?? "";
                 try
                 {
-                    string path = insertPath ?? "";
-                    var jToken = jsonData.SelectToken(path);
+                    if (jsonData != null)
+                    {
+                        jToken = jsonData.SelectToken(path);
+
+                        if (jToken == null)
+                        {
+                            ((JObject)jsonData).Add(new JProperty(path, new JArray()));
+
+                            jToken = jsonData.SelectToken(path);
+                        }
+                    }
 
                     var insertJsonObject = getJsonInsertObjectFromValues(change.Values.FindAll(x => x.IsNew && x.Path.Equals(insertPath)));
 
-                    ((JArray)jToken).AddFirst(insertJsonObject);
+                    if(jToken != null)
+                        ((JArray)jToken).AddFirst(insertJsonObject);
+
+                    if (jsonData == null && insertPath == String.Empty)
+                    {
+                        jsonData = (JObject)insertJsonObject;
+                    }
+
 
                     valueInserts++;
                 }
