@@ -6,12 +6,15 @@ class Program
 {
     static void Main(string[] args)
     {
+        string scriptPath = string.Join(" ", args);
+        Console.Title = $"{Constants.ApplicationName} - V{Constants.ApplicationVersion} - {scriptPath}";
+
         //1 - Start
         var console = new ConsoleManager(Constants.LogFileName);
         console.WriteLog("Starting Realware API Assistant...");
 
         //2 - Load Script
-        var script = Script.ReadScriptFromFile(console, string.Join(" ", args));
+        var script = Script.ReadScriptFromFile(console, scriptPath);
         Script.InitializeScript(console, script);
 
         //3 - Execution
