@@ -10,8 +10,10 @@ namespace RealwareApiAssistant.Models.IO
     {
         public RealWareApiSettings ApiSettings { get; set; }
         public string ExcelFile { get; set; }
+        public string ModelFile { get; set; }
         public List<RealWareApiId> IdColumns { get; set; }
         public List<RealWareApiValue> ValueChanges { get; set; }
+        public List<RealWareApiValue> ValueInserts { get; set; }
         public string ApiOperation { get; set; }
         public Method? Method { get; set; }
         public string CustomLogFileLocation { get; set; }
@@ -34,6 +36,9 @@ namespace RealwareApiAssistant.Models.IO
         public bool IsRealWareApiValueChange(string name)
             => ValueChanges.Find(x => x.ExcelFromColumn == name || x.ExcelToColumn == name) != null;
 
+        public bool IsRealWareApiValueInsert(string name)
+            => ValueInserts.Find(x => x.ExcelFromColumn == name || x.ExcelToColumn == name) != null;
+
         public RealWareApiValue GetRealWareApiValueChange(string name)
         {
             var result = ValueChanges.Find(x => x.ExcelFromColumn == name);
@@ -42,6 +47,15 @@ namespace RealwareApiAssistant.Models.IO
             return result;
         }
 
+        public RealWareApiValue GetRealWareApiValueInsert(string name)
+        {
+            var result = ValueInserts.Find(x => x.ExcelFromColumn == name);
+            if (result == null)
+                result = ValueInserts.Find(x => x.ExcelToColumn == name);
+            return result;
+        }
+
         internal string scriptFilePath = null;
+        internal string modelFileData = null;
     }
 }

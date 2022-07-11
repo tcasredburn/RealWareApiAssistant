@@ -37,6 +37,12 @@
         public bool WriteSuccess(string message) => WriteLog(message, ConsoleColor.Green);
         public bool WriteWarning(string message) => WriteLog("[Warning] " + message, ConsoleColor.Yellow);
         public bool WriteError(string message) => WriteLog("[Error] " + message, ConsoleColor.Red);
+        public bool WriteErrorWithDetails(string message, string details)
+        {
+            WriteError(message);
+            WriteLog("          Details: " + details, ConsoleColor.Red);
+            return false;
+        }
 
         public bool WriteMissingSettingText(string name)
             => WriteError($"Parameter '{name}' is required. Please specify in settings file.");

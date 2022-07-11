@@ -83,24 +83,13 @@ namespace RealwareApiAssistant.Helpers
             else if (script.IdColumns.Count == 0)
                 result = console.WriteWarning("You need atleast one id column specified or nothing will happen.");
 
-            if (script.ValueChanges == null)
-                result = console.WriteMissingSettingText(nameof(script.ValueChanges));
-            else if (script.ValueChanges.Count == 0)
-                result = console.WriteWarning("You need atleast one value change specified or nothing will happen.");
-            else
-            {
-                int index = 0;
-                foreach (var valueChange in script.ValueChanges)
-                {
-                    if (valueChange.ExcelFromColumn != null && valueChange.ExcelFromColumn == valueChange.ExcelToColumn)
-                        result = console.WriteError($"Value change at position {index} CANNOT have matching excel column names for {nameof(valueChange.ExcelFromColumn)} and {nameof(valueChange.ExcelToColumn)} ({valueChange.ExcelFromColumn}).");
-                    if (string.IsNullOrWhiteSpace(valueChange.RealWareColumn))
-                        console.WriteMissingSettingValueChangeText(index, nameof(valueChange.RealWareColumn));
-                    if (valueChange.ToValue == null && string.IsNullOrWhiteSpace(valueChange.ExcelToColumn))
-                        console.WriteWarning($"Value change at position {index} is missing columns '{nameof(valueChange.ToValue)}' and '{nameof(valueChange.ExcelToColumn)}'.");
-                    index++;
-                }
-            }
+            //Value - Both
+            if ((script.ValueChanges == null && script.ValueInserts == null) && script.Method != RestSharp.Method.DELETE)
+                return console.WriteError($"You must specify atleast one ValueChange or ValueInsert or nothing will happen.");
+
+            //Value Changes/inserts
+            validateValues(ref result, "change", console, script.ValueChanges);
+            validateValues(ref result, "insert", console, script.ValueInserts);
 
             // API Settings - EXIT
             if(script.ApiSettings == null)
@@ -127,6 +116,33 @@ namespace RealwareApiAssistant.Helpers
                     script.ExcelFile = newFilePath;
             }
 
+            // Model File
+            if (!string.IsNullOrWhiteSpace(script.ModelFile))
+            {
+                if (!File.Exists(script.ModelFile))
+                {
+                    var newFilePath = Path.Join(Path.GetDirectoryName(script.scriptFilePath), script.ModelFile);
+                    if (!File.Exists(newFilePath))
+                        result = console.WriteError($"Model file does not exist at \"{script.ModelFile}\".");
+                    else
+                        script.ModelFile = newFilePath;
+                }
+
+                //Read the model file
+                try
+                {
+                    script.modelFileData = File.ReadAllText(script.ModelFile);
+
+                    if (string.IsNullOrEmpty(script.modelFileData))
+                        console.WriteWarning("Model file is empty! Resulting API calls may not work if inserting new data.");
+                }
+                catch (Exception ex)
+                {
+                    result = console.WriteError($"Could not read data from model file: {ex.Message}");
+                }
+            }
+
+            // Verbs
             if (script.Method != RestSharp.Method.PUT
                && script.Method != RestSharp.Method.POST
                && script.Method != RestSharp.Method.DELETE)
@@ -134,6 +150,26 @@ namespace RealwareApiAssistant.Helpers
 
             return result;
         }
-        
+
+        private static void validateValues(ref bool result, string type, ConsoleManager console, List<Models.Settings.RealWareApiValue> values)
+        {
+            if (values == null)
+                return;
+
+            if (values.Count == 0)
+                return;
+
+            int index = 0;
+            foreach (var valueChange in values)
+            {
+                if (valueChange.ExcelFromColumn != null && valueChange.ExcelFromColumn == valueChange.ExcelToColumn)
+                    result = console.WriteError($"Value {type} at position {index} CANNOT have matching excel column names for {nameof(valueChange.ExcelFromColumn)} and {nameof(valueChange.ExcelToColumn)} ({valueChange.ExcelFromColumn}).");
+                if (string.IsNullOrWhiteSpace(valueChange.RealWareColumn))
+                    console.WriteMissingSettingValueChangeText(index, nameof(valueChange.RealWareColumn));
+                if (valueChange.ToValue == null && string.IsNullOrWhiteSpace(valueChange.ExcelToColumn))
+                    console.WriteWarning($"Value {type} at position {index} is missing columns '{nameof(valueChange.ToValue)}' and '{nameof(valueChange.ExcelToColumn)}'.");
+                index++;
+            }
+        }
     }
 }

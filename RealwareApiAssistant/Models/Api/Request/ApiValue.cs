@@ -6,5 +6,6 @@
         public string RealwarePropertyName { get; set; }
         public object FromValue { get; set; }
         public object ToValue { get; set; }
+        public bool IsNew { get; set; }
     }
 }

@@ -1,0 +1,67 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "http://asrwiis/Test/EncompassAPI",
+    "Token": "MjAyNDA1OUMtQjU1QS00RUY0LTkxODItQzQ1QTk1MDMzMzND"
+  },
+  "ApiOperation": "/api/realproperty/{accountNo}/{taxYear}",
+  "Method": "PUT",
+  
+  "ExcelFile": "script_2_data.xlsx",
+  "IdColumns": [
+    {
+      "IdName": "{accountNo}",
+      "ColumnValue": "ACCOUNTNO"
+    },
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2022"
+    }
+  ],
+  "ValueChanges": [],
+  "ValueInserts": [
+    {
+      "Path": "Account.Notes",
+      "RealWareColumn": "NoteCategory",
+      "ExcelToColumn": "NOTECATEGORY"
+    },
+	{
+      "Path": "Account.Notes",
+      "RealWareColumn": "NoteText",
+      "ExcelToColumn": "NOTE"
+    },
+	{
+      "Path": "Account.Notes",
+      "RealWareColumn": "NoteInitials",
+      "ExcelToColumn": "NOTEINITIALS"
+    },
+	{
+      "Path": "Account.Notes",
+      "RealWareColumn": "NoteDate",
+      "ExcelToColumn": "NOTEDATE"
+    },
+	{
+      "Path": "Account.Notes",
+      "RealWareColumn": "ShowPublicFlag",
+      "ExcelToColumn": "SHOWPUBLIC"
+    },
+    {
+	  "Path": "Account.Notes",
+      "RealWareColumn": "ShowAssessorFlag",
+      "ToValue": "true"
+    },
+	{
+	  "Path": "Account.Notes",
+      "RealWareColumn": "CciApplicationID",
+      "ToValue": "1"
+	}
+  ],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": true,
+  "SkipWarningPrompts": false,
+  "RetryImmediatelyAfterBadRequest": true
+}
+
+
+

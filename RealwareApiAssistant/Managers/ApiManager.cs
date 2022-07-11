@@ -130,6 +130,21 @@ namespace RealwareApiAssistant.Managers
                     });
                 }
             }
+
+            foreach (var valueInsert in script.ValueInserts)
+            {
+                if (valueInsert.ExcelFromColumn == null && valueInsert.ExcelToColumn == null)
+                {
+                    request.Values.Add(new ApiValue
+                    {
+                        Path = valueInsert.Path,
+                        RealwarePropertyName = valueInsert.RealWareColumn,
+                        FromValue = valueInsert.FromValue,
+                        ToValue = valueInsert.ToValue,
+                        IsNew = true
+                    });
+                }
+            }
         }
 
         private void addExcelIdsAndValues(ApiRequest request, IXLWorksheet sheet, int row)
@@ -167,7 +182,29 @@ namespace RealwareApiAssistant.Managers
                         Path = change.Path,
                         RealwarePropertyName = change.RealWareColumn,
                         FromValue = change.FromValue,
-                        ToValue = change.ToValue
+                        ToValue = change.ToValue,
+                        IsNew = false
+                    });
+                }
+
+                // Add Value Inserts
+                if (script.IsRealWareApiValueInsert(columnName))
+                {
+                    var insert = script.GetRealWareApiValueInsert(columnName);
+
+                    if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
+                        insert.FromValue = sheet.Cell(row, column).Value.ToString();
+
+                    if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
+                        insert.ToValue = sheet.Cell(row, column).Value.ToString();
+
+                    request.Values.Add(new ApiValue()
+                    {
+                        Path = insert.Path,
+                        RealwarePropertyName = insert.RealWareColumn,
+                        FromValue = insert.FromValue,
+                        ToValue = insert.ToValue,
+                        IsNew = true
                     });
                 }
             }
@@ -197,11 +234,11 @@ namespace RealwareApiAssistant.Managers
 
                 string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
 
-                string message = $"{DateTime.Now} - {idField} - {result.Message} - Total_Changes:{result.ChangeCount} - ({index}/{changes.Count})";
+                string message = $"{DateTime.Now} - {idField} - {result.Message} - Total_Changes:{result.ChangeCount} Total_Inserts:{result.InsertCount} - ({index}/{changes.Count})";
                 if (result.Response.StatusDescription == "OK")
                     console.WriteSuccess(message);
                 else
-                    console.WriteError(message);
+                    console.WriteErrorWithDetails(message, result.MessageDetail);
 
                 index++;
             }
@@ -253,7 +290,7 @@ namespace RealwareApiAssistant.Managers
                 return getResult;
             }
 
-            // Update json values from get
+            // Update json values from get (includes insert)
             ApiJsonResult jsonResult = updateJsonValues(json, change);
 
             // Update the values in RealWare via the API
@@ -262,6 +299,7 @@ namespace RealwareApiAssistant.Managers
 
             var result = executeApiRequest(putRequest);
             result.ChangeCount = jsonResult.ChangeCount;
+            result.InsertCount = jsonResult.InsertCount;
 
             return result;
         }
@@ -269,8 +307,12 @@ namespace RealwareApiAssistant.Managers
         private ApiJsonResult updateJsonValues(dynamic json, ApiRequest change)
         {
             int valueChanges = 0;
+            int valueInserts = 0;
             JToken jsonData = JToken.Parse(json.ToString());
-            foreach (var column in change.Values)
+
+            // Changes
+            int totalChangeCount = change.Values.Where(x=>!x.IsNew).Count();
+            foreach (var column in change.Values.FindAll(x=>!x.IsNew))
             {
                 string path = column.Path ?? "";
                 var jTokens = jsonData.SelectTokens(path);
@@ -285,11 +327,43 @@ namespace RealwareApiAssistant.Managers
                     }
                 }
             }
+
+            //Inserts
+            var insertPathList = change.Values.FindAll(x => x.IsNew).Select(x => x.Path).Distinct();
+            int totalInsertCount = insertPathList.Count();
+            foreach (var insertPath in insertPathList)
+            {
+                try
+                {
+                    string path = insertPath ?? "";
+                    var jToken = jsonData.SelectToken(path);
+
+                    var insertJsonObject = getJsonInsertObjectFromValues(change.Values.FindAll(x => x.IsNew && x.Path.Equals(insertPath)));
+
+                    ((JArray)jToken).AddFirst(insertJsonObject);
+
+                    valueInserts++;
+                }
+                catch{}
+            }
+
+            //Return the result
             return new ApiJsonResult()
             {
                 Json = jsonData.ToString(),
-                ChangeCount = valueChanges
+                ChangeCount = valueChanges,
+                TotalChangeCount = totalChangeCount,
+                InsertCount = valueInserts,
+                TotalInsertCount = totalInsertCount
             };
+        }
+
+        private object getJsonInsertObjectFromValues(List<ApiValue> apiValues)
+        {
+            var obj = new JObject();
+            foreach(var value in apiValues)
+                obj.Add(new JProperty(value.RealwarePropertyName, value.ToValue));
+            return obj;
         }
 
         private RestRequest buildRequest(Method method, List<ApiColumn> ids)
@@ -310,6 +384,7 @@ namespace RealwareApiAssistant.Managers
             return new ApiResult
             {
                 Message = result.StatusDescription,
+                MessageDetail = result.Content,
                 Response = result
             };
         }
