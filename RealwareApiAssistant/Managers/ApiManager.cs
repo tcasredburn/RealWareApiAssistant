@@ -357,7 +357,10 @@ namespace RealwareApiAssistant.Managers
                                     || column.FromValue == null)
                         {
                             valueChanges++;
-                            jToken[column.RealwarePropertyName] = column.ToValue.ToString();
+                            if(column.ToValue?.ToString() == "[]")
+                                jToken[column.RealwarePropertyName] = new JArray(); 
+                            else
+                                jToken[column.RealwarePropertyName] = column.ToValue?.ToString();
                         }
                     }
                 }
@@ -368,19 +371,25 @@ namespace RealwareApiAssistant.Managers
             int totalInsertCount = insertPathList.Count();
             foreach (var insertPath in insertPathList)
             {
+                if (insertPath.Contains("ImprovementInventories"))
+                {
+
+                }
+
                 JToken? jToken = null;
                 string path = insertPath ?? "";
+                var cleanPath = path.Replace("[]", "");
                 try
                 {
                     if (jsonData != null)
                     {
-                        jToken = jsonData.SelectToken(path);
+                        jToken = jsonData.SelectToken(cleanPath);
 
                         if (jToken == null)
                         {
-                            ((JObject)jsonData).Add(new JProperty(path, new JArray()));
+                            ((JObject)jsonData).Add(new JProperty(cleanPath, new JArray()));
 
-                            jToken = jsonData.SelectToken(path);
+                            jToken = jsonData.SelectToken(cleanPath);
                         }
                     }
 

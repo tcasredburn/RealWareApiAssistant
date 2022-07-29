@@ -2,7 +2,7 @@
   "profiles": {
     "RealwareApiAssistant": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\sredburn\\source\\repos_shared\\RealWareApiAssistant\\Example Scripts\\3 - Insert New Permits from Excel\\script_3.json"
+      "commandLineArgs": "C:\\Users\\sredburn\\Temp\\RealwareBatchAssistant\\MarkLongachar\\DCPermits728_sredburn-rev.json"
     }
   }
 }
