@@ -1,16 +1,11 @@
 ﻿using ClosedXML.Excel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RealwareApiAssistant.Builders;
 using RealwareApiAssistant.Models.Api.Request;
 using RealwareApiAssistant.Models.Api.Result;
 using RealwareApiAssistant.Models.IO;
-using RealwareApiAssistant.Models.Settings;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealwareApiAssistant.Managers
 {
@@ -172,17 +167,17 @@ namespace RealwareApiAssistant.Managers
                     var change = script.GetRealWareApiValueChange(columnName);
 
                     if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
-                        change.FromValue = sheet.Cell(row, column).Value.ToString();
+                        change.FromValue = getToValue(sheet.Cell(row, column).Value);
 
                     if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
-                        change.ToValue = sheet.Cell(row, column).Value.ToString();
+                        change.ToValue = getToValue(sheet.Cell(row, column).Value);
 
                     request.Values.Add(new ApiValue()
                     {
                         Path = change.Path,
                         RealwarePropertyName = change.RealWareColumn,
                         FromValue = change.FromValue,
-                        ToValue = change.ToValue,
+                        ToValue = getToValue(change.ToValue),
                         IsNew = false
                     });
                 }
@@ -193,21 +188,35 @@ namespace RealwareApiAssistant.Managers
                     var insert = script.GetRealWareApiValueInsert(columnName);
 
                     if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
-                        insert.FromValue = sheet.Cell(row, column).Value.ToString();
+                        insert.FromValue = getToValue(sheet.Cell(row, column).Value);
 
                     if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
-                        insert.ToValue = sheet.Cell(row, column).Value.ToString();
+                        insert.ToValue = getToValue(sheet.Cell(row, column).Value);
 
                     request.Values.Add(new ApiValue()
                     {
                         Path = insert.Path,
                         RealwarePropertyName = insert.RealWareColumn,
                         FromValue = insert.FromValue,
-                        ToValue = insert.ToValue,
+                        ToValue = getToValue(insert.ToValue),
                         IsNew = true
                     });
                 }
             }
+        }
+
+        private object getToValue(object toValue)
+        {
+            if (toValue == null)
+                return null;
+
+            if(script.ForceExcelNULLValues)
+            {
+                if (toValue.ToString() == "NULL")
+                    return null;
+            }
+
+            return toValue;
         }
 
         private bool promptColumnsUsed(int columnUsedCount)
@@ -338,6 +347,7 @@ namespace RealwareApiAssistant.Managers
         {
             int valueChanges = 0;
             int valueInserts = 0;
+            int totalInsertCount = 0;
             JToken? jsonData = null;
             if (json != null)
                 jsonData = JToken.Parse(json.ToString());
@@ -367,47 +377,15 @@ namespace RealwareApiAssistant.Managers
             }
 
             //Inserts
-            var insertPathList = change.Values.FindAll(x => x.IsNew).Select(x => x.Path).Distinct().OrderBy(x=>x);
-            int totalInsertCount = insertPathList.Count();
-            foreach (var insertPath in insertPathList)
+            var builder = new JsonNewObjectBuilder((JObject?)jsonData, change.Values.FindAll(x => x.IsNew));
+            totalInsertCount = builder.InsertCount;
+            try
             {
-                if (insertPath.Contains("ImprovementInventories"))
-                {
-
-                }
-
-                JToken? jToken = null;
-                string path = insertPath ?? "";
-                var cleanPath = path.Replace("[]", "");
-                try
-                {
-                    if (jsonData != null)
-                    {
-                        jToken = jsonData.SelectToken(cleanPath);
-
-                        if (jToken == null)
-                        {
-                            ((JObject)jsonData).Add(new JProperty(cleanPath, new JArray()));
-
-                            jToken = jsonData.SelectToken(cleanPath);
-                        }
-                    }
-
-                    var insertJsonObject = getJsonInsertObjectFromValues(change.Values.FindAll(x => x.IsNew && x.Path.Equals(insertPath)));
-
-                    if(jToken != null)
-                        ((JArray)jToken).AddFirst(insertJsonObject);
-
-                    if (jsonData == null && insertPath == String.Empty)
-                    {
-                        jsonData = (JObject)insertJsonObject;
-                    }
-
-
-                    valueInserts++;
-                }
-                catch{}
+                builder.BuildJsonResult();
+                jsonData = builder.GetResult();
             }
+            catch{ }
+            valueInserts = builder.InsertCountSuccessful;
 
             //Return the result
             return new ApiJsonResult()
@@ -418,14 +396,6 @@ namespace RealwareApiAssistant.Managers
                 InsertCount = valueInserts,
                 TotalInsertCount = totalInsertCount
             };
-        }
-
-        private object getJsonInsertObjectFromValues(List<ApiValue> apiValues)
-        {
-            var obj = new JObject();
-            foreach(var value in apiValues)
-                obj.Add(new JProperty(value.RealwarePropertyName, value.ToValue));
-            return obj;
         }
 
         private RestRequest buildRequest(Method method, List<ApiColumn> ids)

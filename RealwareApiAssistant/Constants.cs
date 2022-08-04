@@ -6,11 +6,11 @@
         public const string LogFileDateFormat = "yyyyMMdd-hhmmss";
         public const string ApiBearerConnection = "Bearer {0}";
         public const string DefaultErrorsAboveMessage = "Errors were found in the validation script so the procedure was not started. See logs above.";
-        public const int ExcelColumnWarningLimit = 10;
+        public const int ExcelColumnWarningLimit = 50;
         public const int RetryRequestWaitTimeInMs = 1000;
         public const string ApplicationJsonParameter = "application/json";
 
         public const string ApplicationName = "Realware Api Assistant";
-        public const string ApplicationVersion = "1.1";
+        public const string ApplicationVersion = "1.3";
     }
 }

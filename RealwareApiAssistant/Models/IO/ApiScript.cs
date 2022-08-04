@@ -21,6 +21,7 @@ namespace RealwareApiAssistant.Models.IO
         public bool SkipWarningPrompts { get; set; }
         public bool RetryImmediatelyAfterBadRequest { get; set; }
         public int ExcelFileRowUpdateCount { get; set; } = 250;
+        public bool ForceExcelNULLValues { get; set; } = true;
 
 
 
