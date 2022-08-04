@@ -47,6 +47,7 @@ namespace RealwareApiAssistant.Helpers
                 return;
 
             initializeCustomLogFile(console, script);
+            initializeExportJsonFilesSettings(console, script);
         }
 
         private static void initializeCustomLogFile(ConsoleManager console, ApiScript script)
@@ -62,6 +63,23 @@ namespace RealwareApiAssistant.Helpers
             }
 
             console.SetLogFileLocation(script.CustomLogFileLocation);
+        }
+
+        private static void initializeExportJsonFilesSettings(ConsoleManager console, ApiScript script)
+        {
+            if (script.ExportJsonSettings == null)
+                script.ExportJsonSettings = ApiExportJsonToFileSettings.Default();
+
+            if (!script.ExportJsonSettings.ExportJsonFiles)
+                return;
+
+#pragma warning disable CS8601 // Possible null reference assignment.
+            if (string.IsNullOrWhiteSpace(script.ExportJsonSettings.FilePath))
+                script.ExportJsonSettings.FilePath = Path.GetDirectoryName(script.scriptFilePath);
+#pragma warning restore CS8601 // Possible null reference assignment.
+
+            if (!Directory.Exists(script.ExportJsonSettings.FilePath))
+                Directory.CreateDirectory(script.ExportJsonSettings.FilePath);
         }
 
         internal static bool ValidateScript(ConsoleManager console, ApiScript script)

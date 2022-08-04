@@ -1,4 +1,8 @@
-﻿namespace RealwareApiAssistant.Helpers
+﻿using RealwareApiAssistant.Models.Api.Request;
+using RealwareApiAssistant.Models.IO;
+using RestSharp;
+
+namespace RealwareApiAssistant.Helpers
 {
     public class Json
     {
@@ -20,6 +24,18 @@
             var arrayIndex = path.Substring(iStart, length);
 
             return Convert.ToInt32(arrayIndex);
+        }
+
+        public static void ExportJsonToFile(ApiExportJsonToFileSettings settings, 
+            List<ApiColumn> ids, Method method, string json, int index)
+        {
+            string name = method.ToString() + "_" + String.Join("_", ids.Select(x=>x.Value)) + $"_{index}" + ".json";
+            string fullPath = Path.Combine(settings.FilePath, "Json", name);
+            try
+            {
+                File.WriteAllText(fullPath, json);
+            }
+            catch { }
         }
     }
 }

@@ -239,7 +239,7 @@ namespace RealwareApiAssistant.Managers
             int index = 1;
             foreach(var change in changes)
             {
-                var result = executeCommandToApi(change);
+                var result = executeCommandToApi(change, index);
 
                 string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
 
@@ -265,16 +265,16 @@ namespace RealwareApiAssistant.Managers
             }
         }
 
-        private ApiResult executeCommandToApi(ApiRequest change)
+        private ApiResult executeCommandToApi(ApiRequest change, int index)
         {
             switch(script.Method)
             {
                 case Method.DELETE:
                     return executeDeleteCommandToApi(change);
                 case Method.PUT:
-                    return executePutCommandToApi(change);
+                    return executePutCommandToApi(change, index);
                 case Method.POST:
-                    return executePostCommandToApi(change);
+                    return executePostCommandToApi(change, index);
                 default:
                     console.WriteError($"'{script.Method}' methods have not been implemented!");
                     return new ApiResult();
@@ -288,7 +288,7 @@ namespace RealwareApiAssistant.Managers
             return executeApiRequest(request);
         }
 
-        private ApiResult executePutCommandToApi(ApiRequest change)
+        private ApiResult executePutCommandToApi(ApiRequest change, int index)
         {
             var getRequest = buildRequest(Method.GET, change.Ids);
 
@@ -320,6 +320,11 @@ namespace RealwareApiAssistant.Managers
             var putRequest = buildRequest(Method.PUT, change.Ids);
             putRequest.AddJsonBody(jsonResult.Json);
 
+            // Save to json file if saved
+            if (script.ExportJsonSettings?.ExportJsonFiles == true)
+                Helpers.Json.ExportJsonToFile(script.ExportJsonSettings, change.Ids,
+                    Method.PUT, jsonResult.Json, index);
+
             var result = executeApiRequest(putRequest);
             result.ChangeCount = jsonResult.ChangeCount;
             result.InsertCount = jsonResult.InsertCount;
@@ -327,7 +332,7 @@ namespace RealwareApiAssistant.Managers
             return result;
         }
 
-        private ApiResult executePostCommandToApi(ApiRequest change)
+        private ApiResult executePostCommandToApi(ApiRequest change, int index)
         {
             // Update json values from get (includes insert)
             JObject baseJson = new JObject();
@@ -336,6 +341,11 @@ namespace RealwareApiAssistant.Managers
             // Update the values in RealWare via the API
             var postRequest = buildRequest(Method.POST, change.Ids);
             postRequest.AddJsonBody(jsonResult.Json);
+
+            // Save to json file if saved
+            if(script.ExportJsonSettings?.ExportJsonFiles == true)
+                Helpers.Json.ExportJsonToFile(script.ExportJsonSettings, change.Ids, 
+                    Method.POST, jsonResult.Json, index);
 
             var result = executeApiRequest(postRequest);
             result.InsertCount = jsonResult.InsertCount;
