@@ -55,7 +55,11 @@ Utility for helping make calls to the RealWare Api using scripts. The scripting 
   "SkipConfirmations": false,
   "SkipWarningPrompts": false,
   "RetryImmediatelyAfterBadRequest": true,
-  "ForceExcelNULLValues": true
+  "ForceExcelNULLValues": true,
+  "ExportJsonSettings":{
+	  "ExportJsonFiles": true,
+	  "FilePath": null
+  }
 }
 ```
 ### Understanding the Parts
@@ -146,7 +150,7 @@ ToValue/ExcelToColumn
   "SkipConfirmations": false,
   "SkipWarningPrompts": false,
   "RetryImmediatelyAfterBadRequest": true,
-  "ForceExcelNULLValues": true
+  "ForceExcelNULLValues": true,
 ```
 
 CustomLogFileLocation - Set a custom location to save the log file to.
@@ -158,3 +162,15 @@ SkipWarningPrompts - "Skips any warning prompts that would halt the script to wa
 RetryImmediatelyAfterBadRequest - If a request fails, retries for one time after 1000 milliseconds.
 
 ForceExcelNULLValues - Allows the use of NULL. It will convert the value ```NULL``` into a ```null``` database value.
+
+
+```json
+  "ExportJsonSettings":{
+	  "ExportJsonFiles": true,
+	  "FilePath": null
+  }
+```
+
+ExportJsonFiles - Enables file creation of every Json object to .json files in a local folder.
+
+FilePath - Leave blank to create a Json folder in the script location. Otherwise, specify a directory.
