@@ -54,7 +54,8 @@ Utility for helping make calls to the RealWare Api using scripts. The scripting 
   "CustomLogFileLocation": null,
   "SkipConfirmations": false,
   "SkipWarningPrompts": false,
-  "RetryImmediatelyAfterBadRequest": true
+  "RetryImmediatelyAfterBadRequest": true,
+  "ForceExcelNULLValues": true
 }
 ```
 ### Understanding the Parts
@@ -144,7 +145,8 @@ ToValue/ExcelToColumn
 "CustomLogFileLocation": null,
   "SkipConfirmations": false,
   "SkipWarningPrompts": false,
-  "RetryImmediatelyAfterBadRequest": true
+  "RetryImmediatelyAfterBadRequest": true,
+  "ForceExcelNULLValues": true
 ```
 
 CustomLogFileLocation - Set a custom location to save the log file to.
@@ -154,3 +156,5 @@ SkipConfirmations - Skips any "Press Y to continue" prompts
 SkipWarningPrompts - "Skips any warning prompts that would halt the script to warn the user"
 
 RetryImmediatelyAfterBadRequest - If a request fails, retries for one time after 1000 milliseconds.
+
+ForceExcelNULLValues - Allows the use of NULL. It will convert the value ```NULL``` into a ```null``` database value.
