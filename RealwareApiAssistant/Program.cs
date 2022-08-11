@@ -25,9 +25,14 @@ class Program
 
         //4 - Close
         console.WriteLog(Environment.NewLine);
-        console.WriteLog("Process is complete. Press any key to close.");
+        if (!script.SkipConfirmations)
+            console.WriteLog("Process is complete. Press any key to close.");
+        else
+            console.WriteLog("Process is complete. Closing.");
         console.CloseLogFile();
-        Console.ReadLine();
+        if (!script.SkipConfirmations)
+            Console.ReadLine();
+        Environment.Exit(0);
     }
 }
 
