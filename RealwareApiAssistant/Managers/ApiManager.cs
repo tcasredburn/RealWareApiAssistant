@@ -387,15 +387,20 @@ namespace RealwareApiAssistant.Managers
             }
 
             //Inserts
-            var builder = new JsonNewObjectBuilder((JObject?)jsonData, change.Values.FindAll(x => x.IsNew));
-            totalInsertCount = builder.InsertCount;
-            try
+            var insertValueList = change.Values.FindAll(x => x.IsNew);
+
+            if (insertValueList.Count > 0)
             {
-                builder.BuildJsonResult();
-                jsonData = builder.GetResult();
+                var builder = new JsonNewObjectBuilder((JObject?)jsonData, insertValueList);
+                totalInsertCount = builder.InsertCount;
+                try
+                {
+                    builder.BuildJsonResult();
+                    jsonData = builder.GetResult();
+                }
+                catch { }
+                valueInserts = builder.InsertCountSuccessful;
             }
-            catch{ }
-            valueInserts = builder.InsertCountSuccessful;
 
             //Return the result
             return new ApiJsonResult()
