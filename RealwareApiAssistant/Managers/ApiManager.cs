@@ -310,6 +310,8 @@ namespace RealwareApiAssistant.Managers
             if (json == null)
             {
                 getResult.Message = "Failed - Did not receive JSON object.";
+                if (getResult.Response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    getResult.MessageDetail = "Are you sure an object with that identifer exists in RealWare?";
                 return getResult;
             }
 

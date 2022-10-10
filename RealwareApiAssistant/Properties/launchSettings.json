@@ -2,7 +2,7 @@
   "profiles": {
     "RealwareApiAssistant": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\sredburn\\Temp\\RealwareBatchAssistant\\MarkLongachar\\DCPermits728_sredburn-rev.json"
+      "commandLineArgs": "\\\\asprint\\Departments\\Management_Information_Systems\\Batch\\Change Deed Status\\script_TEST_UpdateSaleStatusToWorkReady.json"
     }
   }
 }
