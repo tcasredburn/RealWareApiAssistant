@@ -59,7 +59,8 @@ Utility for helping make calls to the RealWare Api using scripts. The scripting 
   "ExportJsonSettings":{
 	  "ExportJsonFiles": true,
 	  "FilePath": null
-  }
+  },
+  "Threads": 6
 }
 ```
 ### Understanding the Parts
@@ -174,3 +175,9 @@ ForceExcelNULLValues - Allows the use of NULL. It will convert the value ```NULL
 ExportJsonFiles - Enables file creation of every Json object to .json files in a local folder.
 
 FilePath - Leave blank to create a Json folder in the script location. Otherwise, specify a directory.
+
+```json
+  "Threads": 6
+```
+
+Threads - Creates specified number of threads to complete the work. If not specified, the default is 1.
