@@ -268,8 +268,6 @@ namespace RealwareApiAssistant.Managers
                     message += suffix;
                     console.WriteErrorWithDetails(message, result.MessageDetail);
                 }
-
-                //index++;
             });
         }
 
