@@ -23,6 +23,7 @@ namespace RealwareApiAssistant.Models.IO
         public int ExcelFileRowUpdateCount { get; set; } = 250;
         public bool ForceExcelNULLValues { get; set; } = true;
         public ApiExportJsonToFileSettings ExportJsonSettings { get; set; }
+        public int Threads { get; set; } = 1;
 
 
         public List<RealWareApiId> GetStaticIdColumns()

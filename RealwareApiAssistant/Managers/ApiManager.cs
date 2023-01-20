@@ -237,13 +237,13 @@ namespace RealwareApiAssistant.Managers
         private void processChangesToApi(List<ApiRequest> changes)
         {
             int index = 1;
-            foreach(var change in changes)
+            Parallel.ForEach(changes, new ParallelOptions { MaxDegreeOfParallelism = script.Threads }, change =>
             {
                 var result = executeCommandToApi(change, index);
 
                 string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
 
-                string message = $"{DateTime.Now} - {idField} - {result.Message} - ";
+                string message = $"{DateTime.Now} - ThreadId:{Thread.CurrentThread.ManagedThreadId} - {idField} - {result.Message} - ";
                 string suffix = $" - ({index}/{changes.Count})";
                 if (result.Response.StatusDescription == "OK")
                 {
@@ -262,7 +262,7 @@ namespace RealwareApiAssistant.Managers
                 }
 
                 index++;
-            }
+            });
         }
 
         private ApiResult executeCommandToApi(ApiRequest change, int index)
