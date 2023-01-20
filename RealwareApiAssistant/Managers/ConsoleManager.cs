@@ -7,6 +7,8 @@
     {
         private StreamWriter log;
         private string logFilePath;
+        private string logFileName;
+        private static Mutex logFileMutex = new Mutex();
 
         public ConsoleManager(string logFilePath)
         {
@@ -16,8 +18,13 @@
 
         public void SetLogFileLocation(string logFilePath)
         {
-            var logFile = File.CreateText(string.Format(logFilePath, DateTime.Now.ToString(Constants.LogFileDateFormat)));
+            logFileName = string.Format(logFilePath, DateTime.Now.ToString(Constants.LogFileDateFormat));
+
+            var logFile = File.CreateText(logFileName);
+
             log = logFile;
+
+            CloseLogFile();
 
             if (log == null)
             {
@@ -53,7 +60,11 @@
         {
             Console.ForegroundColor = color;
             Console.WriteLine(message);
-            log?.WriteLineAsync(message);
+
+            logFileMutex.WaitOne();
+            File.AppendAllText(logFileName, message + Environment.NewLine);
+            logFileMutex.ReleaseMutex();
+
             return false;
         }
     }
