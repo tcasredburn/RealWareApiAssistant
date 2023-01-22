@@ -15,8 +15,10 @@ namespace RealwareApiAssistant.Builders
 
         public JsonNewObjectBuilder(JToken? jsonData, List<ApiValue> insertValues)
         {
-            if (jsonData == null)
-                jsonData = new JObject();
+            this.jsonData = jsonData;
+
+            if (this.jsonData == null)
+                this.jsonData = new JObject();
 
             initializeValues(insertValues);
 
