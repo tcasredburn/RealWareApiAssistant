@@ -11,7 +11,8 @@ class Program
 
         //1 - Start
         var console = new ConsoleManager(Constants.LogFileName);
-        console.WriteLog("Starting Realware API Assistant...");
+        console.WriteLog(DateTime.Now.ToString());
+        console.WriteLog($"Starting Realware API Assistant V{Constants.ApplicationVersion}...");
 
         //2 - Load Script
         var script = Script.ReadScriptFromFile(console, scriptPath);
