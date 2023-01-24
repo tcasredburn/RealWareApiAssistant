@@ -117,43 +117,49 @@ namespace RealwareApiAssistant.Managers
                 // Add Value Changes
                 if (script.IsRealWareApiValueChange(columnName))
                 {
-                    var change = script.GetRealWareApiValueChange(columnName);
+                    var changes = script.GetRealWareApiValueChanges(columnName);
 
-                    if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
-                        change.FromValue = getToValue(value);
-
-                    if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
-                        change.ToValue = getToValue(value);
-
-                    request.Values.Add(new ApiValue()
+                    foreach (var change in changes)
                     {
-                        Path = change.Path,
-                        RealwarePropertyName = change.RealWareColumn,
-                        FromValue = change.FromValue,
-                        ToValue = getToValue(change.ToValue),
-                        IsNew = false
-                    });
+                        if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
+                            change.FromValue = getToValue(value);
+
+                        if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
+                            change.ToValue = getToValue(value);
+
+                        request.Values.Add(new ApiValue()
+                        {
+                            Path = change.Path,
+                            RealwarePropertyName = change.RealWareColumn,
+                            FromValue = change.FromValue,
+                            ToValue = getToValue(change.ToValue),
+                            IsNew = false
+                        });
+                    }
                 }
 
                 // Add Value Inserts
                 if (script.IsRealWareApiValueInsert(columnName))
                 {
-                    var insert = script.GetRealWareApiValueInsert(columnName);
+                    var inserts = script.GetRealWareApiValueInserts(columnName);
 
-                    if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
-                        insert.FromValue = getToValue(value);
-
-                    if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
-                        insert.ToValue = getToValue(value);
-
-                    request.Values.Add(new ApiValue()
+                    foreach(var insert in inserts)
                     {
-                        Path = insert.Path,
-                        RealwarePropertyName = insert.RealWareColumn,
-                        FromValue = insert.FromValue,
-                        ToValue = getToValue(insert.ToValue),
-                        IsNew = true
-                    });
+                        if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
+                            insert.FromValue = getToValue(value);
+
+                        if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
+                            insert.ToValue = getToValue(value);
+
+                        request.Values.Add(new ApiValue()
+                        {
+                            Path = insert.Path,
+                            RealwarePropertyName = insert.RealWareColumn,
+                            FromValue = insert.FromValue,
+                            ToValue = getToValue(insert.ToValue),
+                            IsNew = true
+                        });
+                    }
                 }
             }
         }

@@ -41,20 +41,20 @@ namespace RealwareApiAssistant.Models.IO
         public bool IsRealWareApiValueInsert(string name)
             => ValueInserts.Find(x => x.ExcelFromColumn == name || x.ExcelToColumn == name) != null;
 
-        public RealWareApiValue GetRealWareApiValueChange(string name)
+        public List<RealWareApiValue> GetRealWareApiValueChanges(string name)
         {
-            var result = ValueChanges.Find(x => x.ExcelFromColumn == name);
-            if (result == null)
-                result = ValueChanges.Find(x => x.ExcelToColumn == name);
-            return result;
+            var result = ValueChanges.FindAll(x => x.ExcelFromColumn == name);
+            if (result.Count == 0)
+                result = ValueChanges.FindAll(x => x.ExcelToColumn == name);
+            return result ?? new List<RealWareApiValue>();
         }
 
-        public RealWareApiValue GetRealWareApiValueInsert(string name)
+        public List<RealWareApiValue> GetRealWareApiValueInserts(string name)
         {
-            var result = ValueInserts.Find(x => x.ExcelFromColumn == name);
-            if (result == null)
-                result = ValueInserts.Find(x => x.ExcelToColumn == name);
-            return result;
+            var result = ValueInserts.FindAll(x => x.ExcelFromColumn == name);
+            if (result.Count == 0)
+                result = ValueInserts.FindAll(x => x.ExcelToColumn == name);
+            return result ?? new List<RealWareApiValue>();
         }
 
         internal string scriptFilePath = null;

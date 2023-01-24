@@ -98,16 +98,16 @@ namespace RealwareApiAssistant.Builders
                 // most recently added one
                 else
                 {
-                    if (currentToken.Type == JTokenType.Array)
-                    {
-                        if (currentToken.HasValues)
-                        {
-                            if(((JArray)currentToken).Count == pathArrayIndex + 1)
-                            {
-                                currentToken = currentToken.Last();
-                            }
-                        }
-                    }
+                    //if (currentToken.Type == JTokenType.Array)
+                    //{
+                    //    if (currentToken.HasValues)
+                    //    {
+                    //        if(((JArray)currentToken).Count == pathArrayIndex + 2)// 0 should be starting index not 1? Maybe need to check for this better
+                    //        {
+                    //            currentToken = currentToken.Last();
+                    //        }
+                    //    }
+                    //}
                 }
 
                 previousToken = currentToken;

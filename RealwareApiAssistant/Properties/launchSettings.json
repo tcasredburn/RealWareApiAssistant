@@ -2,7 +2,7 @@
   "profiles": {
     "RealwareApiAssistant": {
       "commandName": "Project",
-      "commandLineArgs": "\\\\asprint\\Departments\\Management_Information_Systems\\Batch\\Visual Inspection\\Test_UpdateVIInformation_Commercial.json"
+      "commandLineArgs": "\\\\asprint\\Departments\\Management_Information_Systems\\Batch\\Modelling\\Test_UpdateToModelValueNotes_Cleanup.json"
     }
   }
 }
