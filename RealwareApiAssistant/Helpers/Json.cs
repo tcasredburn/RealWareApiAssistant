@@ -21,6 +21,11 @@ namespace RealwareApiAssistant.Helpers
             var iStart = path.LastIndexOf('[') + 1;
             var iEnd = path.LastIndexOf(']');
             var length = iEnd - iStart;
+
+            // Return -1 when not found or object is not an array
+            if (length < 0)
+                return -1;
+
             var arrayIndex = path.Substring(iStart, length);
 
             return Convert.ToInt32(arrayIndex);
