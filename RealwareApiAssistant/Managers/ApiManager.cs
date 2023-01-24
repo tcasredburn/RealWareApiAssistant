@@ -1,4 +1,7 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RealwareApiAssistant.Builders;
@@ -27,13 +30,132 @@ namespace RealwareApiAssistant.Managers
 
         private void executeProcedure()
         {
-            var changes = getChangeList();
+            var changes = getChangeListPerformant();
 
             if (changes == null)
                 return;
 
             if (confirmUpdateChanges(changes))
                 processChangesToApi(changes);
+        }
+
+        private List<ApiRequest> getChangeListPerformant()
+        {
+            console.WriteLog($"Beginning read from excel file at '{script.ExcelFile}' using fast data import method...");
+
+            var requests = new List<ApiRequest>();
+
+            var fileData = readDataPerformant(script.ExcelFile);
+
+            List<string> columns = new List<string>();
+            List<List<string>> rows = new List<List<string>>();
+
+            //Column only row
+            var columnRow = fileData.First();
+            foreach(var cell in columnRow.ToList())
+            {
+                columns.Add(cell);
+            }
+
+            if (promptColumnsUsed(columns.Count))
+                return null;
+
+            //Row data
+            int row_index = 0;
+            foreach (var row in fileData.ToList().Skip(1))
+            {
+                var currentRow = new List<string>();
+
+                foreach (var cell in row)
+                    currentRow.Add(cell);
+
+                if ((row_index % script.ExcelFileRowUpdateCount) == 0)
+                    console.WriteLog($"Processed {row_index} rows.");
+
+                // Build change data
+                var change = getChange(columns, currentRow);
+
+                requests.Add(change);
+
+                row_index++;
+            }
+            console.WriteLog($"Processed {row_index} rows.");
+
+            return requests;
+        }
+
+        private ApiRequest getChange(List<string> columns, List<string> currentRow)
+        {
+            var request = new ApiRequest();
+
+            addStaticIdsToRequest(request);
+            addStaticValuesToRequest(request);
+            addExcelIdsAndValues(request, columns, currentRow);
+
+            return request;
+        }
+
+        private void addExcelIdsAndValues(ApiRequest request, List<string> columns, List<string> currentRow)
+        {
+            for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
+            {
+                string columnName = columns[columnIndex];
+                string value = currentRow[columnIndex];
+
+                // Add Ids
+                if (script.IsRealWareApiId(columnName))
+                {
+                    var id = script.GetRealWareApiId(columnName);
+
+                    request.Ids.Add(new ApiColumn()
+                    {
+                        ColumnId = id.IdName,
+                        Value = value
+                    });
+                }
+
+                // Add Value Changes
+                if (script.IsRealWareApiValueChange(columnName))
+                {
+                    var change = script.GetRealWareApiValueChange(columnName);
+
+                    if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
+                        change.FromValue = getToValue(value);
+
+                    if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
+                        change.ToValue = getToValue(value);
+
+                    request.Values.Add(new ApiValue()
+                    {
+                        Path = change.Path,
+                        RealwarePropertyName = change.RealWareColumn,
+                        FromValue = change.FromValue,
+                        ToValue = getToValue(change.ToValue),
+                        IsNew = false
+                    });
+                }
+
+                // Add Value Inserts
+                if (script.IsRealWareApiValueInsert(columnName))
+                {
+                    var insert = script.GetRealWareApiValueInsert(columnName);
+
+                    if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
+                        insert.FromValue = getToValue(value);
+
+                    if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
+                        insert.ToValue = getToValue(value);
+
+                    request.Values.Add(new ApiValue()
+                    {
+                        Path = insert.Path,
+                        RealwarePropertyName = insert.RealWareColumn,
+                        FromValue = insert.FromValue,
+                        ToValue = getToValue(insert.ToValue),
+                        IsNew = true
+                    });
+                }
+            }
         }
 
         private bool confirmUpdateChanges(List<ApiRequest> changes)
@@ -54,49 +176,6 @@ namespace RealwareApiAssistant.Managers
             return result;
         }
 
-        private List<ApiRequest> getChangeList()
-        {
-            console.WriteLog($"Beginning read from excel file at '{script.ExcelFile}'...");
-
-            int rowCount = 1;
-            var requests = new List<ApiRequest>();
-
-            using (var workbook = new XLWorkbook(script.ExcelFile))
-            {
-                var sheet = workbook.Worksheets.First();
-
-                console.WriteLog($"Selected sheet \"{sheet.Name}\".");
-
-                var columnUsedCount = sheet.ColumnsUsed().Count();
-                if (promptColumnsUsed(columnUsedCount))
-                    return null;
-
-                // Note: starts at row 2, skips header column by default
-                for (int row = 2; row <= sheet.RowsUsed().Count(); row++)
-                {
-                    if ((rowCount % script.ExcelFileRowUpdateCount) == 0)
-                        console.WriteLog($"Processed {rowCount} rows.");
-
-                    var change = getChange(sheet, row);
-
-                    requests.Add(change);
-                    rowCount++;
-                }
-            }
-
-            return requests;
-        }
-
-        private ApiRequest getChange(IXLWorksheet sheet, int row)
-        {
-            var request = new ApiRequest();
-
-            addStaticIdsToRequest(request);
-            addStaticValuesToRequest(request);
-            addExcelIdsAndValues(request, sheet, row);
-
-            return request;
-        }
 
         private void addStaticIdsToRequest(ApiRequest request)
         {
@@ -136,69 +215,6 @@ namespace RealwareApiAssistant.Managers
                         RealwarePropertyName = valueInsert.RealWareColumn,
                         FromValue = valueInsert.FromValue,
                         ToValue = valueInsert.ToValue,
-                        IsNew = true
-                    });
-                }
-            }
-        }
-
-        private void addExcelIdsAndValues(ApiRequest request, IXLWorksheet sheet, int row)
-        {
-            for (int column = 1; column <= sheet.ColumnsUsed().Count(); column++)
-            {
-                string columnName = sheet.Cell(1, column).Value.ToString();
-                string value = sheet.Cell(row, column).Value.ToString();
-
-                // Add Ids
-                if (script.IsRealWareApiId(columnName))
-                {
-                    var id = script.GetRealWareApiId(columnName);
-
-                    request.Ids.Add(new ApiColumn()
-                    {
-                        ColumnId = id.IdName,
-                        Value = value
-                    });
-                }
-
-                // Add Value Changes
-                if (script.IsRealWareApiValueChange(columnName))
-                {
-                    var change = script.GetRealWareApiValueChange(columnName);
-
-                    if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
-                        change.FromValue = getToValue(sheet.Cell(row, column).Value);
-
-                    if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
-                        change.ToValue = getToValue(sheet.Cell(row, column).Value);
-
-                    request.Values.Add(new ApiValue()
-                    {
-                        Path = change.Path,
-                        RealwarePropertyName = change.RealWareColumn,
-                        FromValue = change.FromValue,
-                        ToValue = getToValue(change.ToValue),
-                        IsNew = false
-                    });
-                }
-
-                // Add Value Inserts
-                if (script.IsRealWareApiValueInsert(columnName))
-                {
-                    var insert = script.GetRealWareApiValueInsert(columnName);
-
-                    if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
-                        insert.FromValue = getToValue(sheet.Cell(row, column).Value);
-
-                    if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
-                        insert.ToValue = getToValue(sheet.Cell(row, column).Value);
-
-                    request.Values.Add(new ApiValue()
-                    {
-                        Path = insert.Path,
-                        RealwarePropertyName = insert.RealWareColumn,
-                        FromValue = insert.FromValue,
-                        ToValue = getToValue(insert.ToValue),
                         IsNew = true
                     });
                 }
@@ -406,7 +422,10 @@ namespace RealwareApiAssistant.Managers
                     builder.BuildJsonResult();
                     jsonData = builder.GetResult();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                }
                 valueInserts = builder.InsertCountSuccessful;
             }
 
@@ -442,6 +461,50 @@ namespace RealwareApiAssistant.Managers
                 MessageDetail = result.Content,
                 Response = result
             };
+        }
+
+        private IEnumerable<List<string>> readDataPerformant(string fileName)
+        {
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(fileName, false))
+            {
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                WorksheetPart worksheetPart = workbookPart.WorksheetParts.FirstOrDefault();
+                if (workbookPart != null)
+                {
+                    using (OpenXmlReader oxr = OpenXmlReader.Create(worksheetPart))
+                    {
+                        IEnumerable<SharedStringItem> sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>();
+                        while (oxr.Read())
+                        {
+                            if (oxr.ElementType == typeof(Row))
+                            {
+                                oxr.ReadFirstChild();
+                                List<string> rowData = new List<string>();
+                                do
+                                {
+                                    if (oxr.ElementType == typeof(Cell))
+                                    {
+                                        Cell c = (Cell)oxr.LoadCurrentElement();
+                                        string cellValue;
+                                        if (c.DataType != null && c.DataType == CellValues.SharedString)
+                                        {
+                                            SharedStringItem ssi = sharedStrings.ElementAt(int.Parse(c.CellValue.InnerText));
+                                            cellValue = ssi.Text.Text;
+                                        }
+                                        else
+                                        {
+                                            cellValue = c.CellValue != null ? c.CellValue.InnerText : "";
+                                        }
+                                        rowData.Add(cellValue);
+                                    }
+                                }
+                                while (oxr.ReadNextSibling());
+                                yield return rowData;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace RealwareApiAssistant.Models.IO
         public bool SkipConfirmations { get; set; }
         public bool SkipWarningPrompts { get; set; }
         public bool RetryImmediatelyAfterBadRequest { get; set; }
-        public int ExcelFileRowUpdateCount { get; set; } = 250;
+        public int ExcelFileRowUpdateCount { get; set; } = 5000;
         public bool ForceExcelNULLValues { get; set; } = true;
         public ApiExportJsonToFileSettings ExportJsonSettings { get; set; }
         public int Threads { get; set; } = 1;
