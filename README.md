@@ -50,6 +50,7 @@ Utility for helping make calls to the RealWare Api using scripts. The scripting 
 	  "ToValue": "6/7/2022"
     }
   ],
+  "ValueInserts":[],
 
   "CustomLogFileLocation": null,
   "SkipConfirmations": false,
