@@ -11,6 +11,6 @@
         public const string ApplicationJsonParameter = "application/json";
 
         public const string ApplicationName = "Realware Api Assistant";
-        public const string ApplicationVersion = "1.4";
+        public const string ApplicationVersion = "1.5";
     }
 }
