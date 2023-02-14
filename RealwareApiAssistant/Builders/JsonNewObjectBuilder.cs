@@ -130,10 +130,26 @@ namespace RealwareApiAssistant.Builders
             // Insert the values into the selected node path
             var newJsonObject = getJsonInsertObjectFromValues(node.Values);
 
+
+            // Fixes issues cause by a JValue when
+            // it really should be the parent object of this kind
+            // of type
+            var value = currentToken as JValue;
+            if (value != null)
+            {
+                currentToken = value.Parent as JProperty;
+            }
+
             if (isArray)
                 ((JArray)currentToken).Add(newJsonObject);
             else
-                ((JObject)currentToken).Add(newJsonObject);
+            {
+                var property = currentToken as JProperty;
+                if (property != null)
+                    property.Value = (JObject?)newJsonObject;
+                else
+                    ((JObject)currentToken).Add(newJsonObject);
+            }
             InsertCountSuccessful++;
 
             return json;
