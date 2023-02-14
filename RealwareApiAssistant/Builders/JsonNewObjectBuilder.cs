@@ -85,6 +85,20 @@ namespace RealwareApiAssistant.Builders
                 currentToken = currentToken.SelectToken(cleanPath);
                 isArray = Helpers.Json.IsArrayPath(shortPath);
 
+                // Fixes issue with going through an already
+                // established array and not creating it.
+                //
+                // Note: This could definitely be improved
+                //
+                if(isArray 
+                    && pathArrayIndex >= 0
+                    && shortPath != shortPaths?.Last())
+                {
+                    var array = currentToken as JArray;
+                    if (array != null)
+                        currentToken = array[pathArrayIndex];
+                }
+
                 // If current path is not found, create it
                 if (currentToken == null)
                 {
