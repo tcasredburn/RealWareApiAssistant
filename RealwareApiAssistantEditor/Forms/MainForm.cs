@@ -31,6 +31,9 @@ namespace RealwareApiAssistantEditor
             // Script
             iExecuteScript.ItemClick += (s, e) => _controller.ExecuteSelectedScript();
             //
+
+            //TEST ONLY - NEED TO REMOVE!!!
+            Shown += (s, e) => { _controller.OpenScript("C:\\Users\\seanr\\source\\repos\\RealWareApiAssistant\\Example Scripts\\4 - Insert Account Land Abstracts from Excel\\script_4_a.json"); };
         }
 
         public TabbedView GetTabbedView() => tabbedView1;

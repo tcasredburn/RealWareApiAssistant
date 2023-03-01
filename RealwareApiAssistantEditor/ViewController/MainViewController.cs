@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace RealwareApiAssistantEditor.ViewController
 {
@@ -34,12 +35,7 @@ namespace RealwareApiAssistantEditor.ViewController
             dialog.Filter = "Realware API Assistant Script|*.json";
             if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                //TODO: Check all tabs for if file is already open
-
-                string scriptName = dialog.FileName.Substring(
-                    dialog.FileName.LastIndexOf("\\") + 1);
-
-                createScriptTab(scriptName, dialog.FileName);
+                OpenScript(dialog.FileName);
             }
         }
 
@@ -78,6 +74,17 @@ namespace RealwareApiAssistantEditor.ViewController
         internal void ExecuteSelectedScript()
         {
             //TODO: If not saved, make them save it first
+        }
+
+        internal void OpenScript(string fileName)
+        {
+
+            //TODO: Check all tabs for if file is already open
+
+
+            string scriptName = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+
+            createScriptTab(scriptName, fileName);
         }
     }
 }

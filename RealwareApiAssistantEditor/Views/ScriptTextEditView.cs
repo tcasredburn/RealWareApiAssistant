@@ -1,4 +1,6 @@
 ﻿using DevExpress.Office.Utils;
+using DevExpress.Portable;
+using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.Services;
 using RealwareApiAssistantEditor.Service;
 using System;
@@ -25,12 +27,17 @@ namespace RealwareApiAssistantEditor.Views
         private void initializeHighlighting()
         {
             // Register the created service and load the document
-            richEditControl1.ReplaceService<ISyntaxHighlightService>(new ScriptSyntaxHighlightService(richEditControl1.Document));
+            richEditControl1.ReplaceService<ISyntaxHighlightService>(
+                new ScriptSyntaxHighlightService(richEditControl1.Document));
 
             // Specify the richEdit's layout settings
             richEditControl1.ActiveViewType = DevExpress.XtraRichEdit.RichEditViewType.Simple;
-            richEditControl1.Document.Sections[0].Page.Width = Units.InchesToDocumentsF(80f);
-            richEditControl1.Document.DefaultCharacterProperties.FontName = "Courier New";
+            //richEditControl1.Document.Sections[0].Page.Width = Units.InchesToDocumentsF(80f);
+            //richEditControl1.Document.DefaultCharacterProperties.FontName = "Consolas";
+            //richEditControl1.Appearance.Text.Font = new System.Drawing.Font("Consolas", 12f);
+
+            ((SimpleView)richEditControl1.ActiveView).AllowDisplayLineNumbers = true;
+            //((SimpleView)richEditControl1.ActiveView).Padding = new PortablePadding(60, 0, 0, 0);
         }
 
         private void intializeEvents()

@@ -11,7 +11,12 @@ namespace RealwareApiAssistantEditor.Service
     {
         readonly Document document;
 
+        string[] vJSONKeywords = { "{", ":", "[", "]", "}" };
+        Color[] vJSONColors = { Color.Black, Color.Red, Color.Black, Color.Green };
+
         Regex _keywords;
+
+        Regex _keywords2;
         // Declare a regular expression to search text in quotes (including embedded quotes)
         Regex _quotedString = new Regex(@"'([^']|'')*'");
 
@@ -23,9 +28,20 @@ namespace RealwareApiAssistantEditor.Service
             this.document = document;
 
             // Declare keywords
-            string[] keywords = { "INSERT", "SELECT", "CREATE", "TABLE", "USE", "IDENTITY", "ON", "OFF", "NOT", "NULL", "WITH", "SET", "GO", "DECLARE", "EXECUTE", "NVARCHAR", "FROM", "INTO", "VALUES", "WHERE", "AND" };
+            string[] keywords = { "ApiSettings", "ApiPath", "Token", "ExcelFile", "ModelFile",
+                "IdColumns", "ValueChanges", "ValueInserts", "ApiOperation", "Method",
+                "CustomLogFileLocation", "SkipConfirmations", "SkipWarningPrompts",
+                "RetryImmediatelyAfterBadRequest", "ExcelFileRowUpdateCount", "ForceExcelNULLValues",
+                "ExportJsonSettings", "ExportJsonFiles", "FilePath", "Threads"};
+
+            string[] keywords2 = { "true", "false", "null", "[0-9]", "GET", "PUT", "POST", "DELETE"};
+
             this._keywords = new Regex(@"\b(" + string.Join("|", keywords.Select(w => Regex.Escape(w))) + @")\b");
+
+            this._keywords2 = new Regex(@"\b(" + string.Join("|", keywords2.Select(w => Regex.Escape(w))) + @")\b");
+
         }
+
 
         private List<SyntaxHighlightToken> ParseTokens()
         {
@@ -45,6 +61,14 @@ namespace RealwareApiAssistantEditor.Service
             {
                 if (!IsRangeInTokens(ranges[j], tokens))
                     tokens.Add(CreateToken(ranges[j].Start.ToInt(), ranges[j].End.ToInt(), Color.Blue));
+            }
+
+            // Extract all keywords2
+            ranges = document.FindAll(_keywords2).GetAsFrozen() as DocumentRange[];
+            for (int j = 0; j < ranges.Length; j++)
+            {
+                if (!IsRangeInTokens(ranges[j], tokens))
+                    tokens.Add(CreateToken(ranges[j].Start.ToInt(), ranges[j].End.ToInt(), Color.OrangeRed));
             }
 
             // Find all comments
