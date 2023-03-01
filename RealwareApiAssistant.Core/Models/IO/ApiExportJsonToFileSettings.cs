@@ -1,4 +1,4 @@
-﻿namespace RealwareApiAssistant.Models.IO
+﻿namespace RealwareApiAssistant.Core.Models.IO
 {
     public class ApiExportJsonToFileSettings
     {

@@ -1,5 +1,5 @@
-﻿using RealwareApiAssistant.Models.Api.Request;
-using RealwareApiAssistant.Models.IO;
+﻿using RealwareApiAssistant.Core.Models.IO;
+using RealwareApiAssistant.Models.Api.Request;
 using RestSharp;
 
 namespace RealwareApiAssistant.Helpers

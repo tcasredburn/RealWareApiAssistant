@@ -1,7 +1,7 @@
-﻿using RealwareApiAssistant.Models.Settings;
+﻿using RealwareApiAssistant.Core.Models.Settings;
 using RestSharp;
 
-namespace RealwareApiAssistant.Models.IO
+namespace RealwareApiAssistant.Core.Models.IO
 {
     /// <summary>
     /// Script settings file.
@@ -59,5 +59,33 @@ namespace RealwareApiAssistant.Models.IO
 
         internal string scriptFilePath = null;
         internal string modelFileData = null;
+
+        public static ApiScript GetDefault()
+        {
+            return new ApiScript
+            {
+                ApiOperation = "PUT",
+                ApiSettings = new RealWareApiSettings
+                {
+                    ApiPath = "http://{server name}/Production/EncompassAPI",
+                    Token = "{insert token here}"
+                },
+                RetryImmediatelyAfterBadRequest = true,
+                CustomLogFileLocation = null,
+                ExcelFile = "{insert excel file path here}",
+                ExportJsonSettings = new ApiExportJsonToFileSettings
+                {
+                    ExportJsonFiles = false,
+                    FilePath = "/json"
+                },
+                ForceExcelNULLValues= true,
+                SkipConfirmations = false,
+                SkipWarningPrompts= false,
+                Method = RestSharp.Method.PUT,
+                Threads = 8,
+                ExcelFileRowUpdateCount = 5000,
+                
+            };
+        }
     }
 }

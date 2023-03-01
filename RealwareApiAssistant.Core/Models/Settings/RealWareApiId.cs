@@ -1,4 +1,4 @@
-﻿namespace RealwareApiAssistant.Models.Settings
+﻿namespace RealwareApiAssistant.Core.Models.Settings
 {
     public class RealWareApiId
     {

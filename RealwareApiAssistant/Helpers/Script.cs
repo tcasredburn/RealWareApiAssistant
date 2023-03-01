@@ -1,5 +1,5 @@
-﻿using RealwareApiAssistant.Managers;
-using RealwareApiAssistant.Models.IO;
+﻿using RealwareApiAssistant.Core.Models.IO;
+using RealwareApiAssistant.Managers;
 
 namespace RealwareApiAssistant.Helpers
 {
