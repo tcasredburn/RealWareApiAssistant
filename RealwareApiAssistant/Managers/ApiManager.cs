@@ -62,6 +62,7 @@ namespace RealwareApiAssistant.Managers
 
             //Row data
             int row_index = 0;
+            int error_rows = 0;
             foreach (var row in fileData.ToList().Skip(1))
             {
                 var currentRow = new List<string>();
@@ -72,14 +73,23 @@ namespace RealwareApiAssistant.Managers
                 if ((row_index % script.ExcelFileRowUpdateCount) == 0)
                     console.WriteLog($"Processed {row_index} rows.");
 
+                // Skip if fields do not match
+                if (columns.Count > currentRow.Count)
+                {
+                    console.WriteWarning($"Row {row_index+1} has blank fields so columns cannot match. Skipping.");
+                    error_rows++;
+                }
                 // Build change data
-                var change = getChange(columns, currentRow);
+                else
+                {
+                    var change = getChange(columns, currentRow);
 
-                requests.Add(change);
+                    requests.Add(change);
+                }
 
                 row_index++;
             }
-            console.WriteLog($"Processed {row_index} rows.");
+            console.WriteLog($"Processed {row_index-error_rows}/{row_index} rows.");
 
             return requests;
         }
