@@ -279,26 +279,48 @@ namespace RealwareApiAssistant.Managers
                     currentIndex = index++;
                 }
 
-                var result = executeCommandToApi(change, currentIndex);
 
-                string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
+                int retries = 1 + script.RetryCount; // number of retries
+                bool success = false;
+                while (!success && retries > 0)
+                {
+                    try
+                    {
+                        var result = executeCommandToApi(change, currentIndex);
 
-                string message = $"{DateTime.Now} - ThreadId:{Thread.CurrentThread.ManagedThreadId.ToString().PadLeft(2,'0')} - {idField} - {result.Message} - ";
-                string suffix = $" - ({currentIndex}/{changes.Count})";
-                if (result.Response.StatusDescription == "OK")
-                {
-                    message += $"Total_Changes:{result.ChangeCount} Total_Inserts:{result.InsertCount}" + suffix;
-                    console.WriteSuccess(message);
-                }
-                else if (result.Response.StatusDescription == "Created")
-                {
-                    message += $"Total_Inserts:{result.InsertCount}" + suffix;
-                    console.WriteSuccess(message);
-                }
-                else
-                {
-                    message += suffix;
-                    console.WriteErrorWithDetails(message, result.MessageDetail);
+                        string idField = string.Join("|", change.Ids.Select(x => x.Value).ToArray());
+
+                        string message = $"{DateTime.Now} - ThreadId:{Thread.CurrentThread.ManagedThreadId.ToString().PadLeft(2, '0')} - {idField} - {result.Message} - ";
+                        string suffix = $" - ({currentIndex}/{changes.Count})";
+                        if (result.Response.StatusDescription == "OK")
+                        {
+                            message += $"Total_Changes:{result.ChangeCount} Total_Inserts:{result.InsertCount}" + suffix;
+                            console.WriteSuccess(message);
+                        }
+                        else if (result.Response.StatusDescription == "Created")
+                        {
+                            message += $"Total_Inserts:{result.InsertCount}" + suffix;
+                            console.WriteSuccess(message);
+                        }
+                        else
+                        {
+                            message += suffix;
+                            console.WriteErrorWithDetails(message, result.MessageDetail);
+                        }
+                        success = true; // if operation is successful, exit loop
+                    }
+                    catch (Exception ex)
+                    {
+                        if (retries <= 0) // if no retries left, rethrow the exception
+                        {
+                            throw;
+                        }
+                        else
+                        {
+                            Thread.Sleep(script.RetryWaitTimeInMs); // wait for x seconds before the next retry
+                            retries--;
+                        }
+                    }
                 }
             });
         }

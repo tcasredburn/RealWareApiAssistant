@@ -24,6 +24,8 @@ namespace RealwareApiAssistant.Models.IO
         public bool ForceExcelNULLValues { get; set; } = true;
         public ApiExportJsonToFileSettings ExportJsonSettings { get; set; }
         public int Threads { get; set; } = 1;
+        public int RetryCount { get; set; } = 0;
+        public int RetryWaitTimeInMs { get; set; } = 5000;
 
 
         public List<RealWareApiId> GetStaticIdColumns()
