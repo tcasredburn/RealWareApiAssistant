@@ -1,16 +1,16 @@
 ﻿{
   "ApiSettings": {
-    "ApiPath": "http://asrwiis/Test/EncompassAPI",
-    "Token": "MjAyNDA1OUMtQjU1QS00RUY0LTkxODItQzQ1QTk1MDMzMzND"
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
   },
   "ApiOperation": "/api/permits/{taxYear}",
   "Method": "POST",
   
-  "ExcelFile": "script_3_data.xlsx",
+  "ExcelFile": "3-InsertNewPermits_Data.xlsx",
   "IdColumns": [
     {
       "IdName": "{taxYear}",
-      "StaticValue": "2022"
+      "StaticValue": "2023"
     }
   ],
   "ValueChanges": [],
@@ -91,52 +91,52 @@
       "ExcelToColumn": "PermitStatus"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Name1",
       "ExcelToColumn": "ApplicantName1"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Name2",
       "ExcelToColumn": "ApplicantName2"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Phone",
       "ExcelToColumn": "ApplicantPhone"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Address1",
       "ExcelToColumn": "ApplicantAddress1"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Address2",
       "ExcelToColumn": "ApplicantAddress2"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "City",
       "ExcelToColumn": "ApplicantCity"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "StateCode",
       "ExcelToColumn": "ApplicantState"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "Zipcode",
       "ExcelToColumn": "ApplicantZipcode"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "PrimaryApplicantFlag",
       "ExcelToColumn": "PrimaryApplicantFlag"
     },
 	{
-      "Path": "Applicants",
+      "Path": "Applicants[0]",
       "RealWareColumn": "OwnerFlag",
       "ExcelToColumn": "OwnerFlag"
     },
@@ -146,7 +146,10 @@
   "CustomLogFileLocation": null,
   "SkipConfirmations": true,
   "SkipWarningPrompts": true,
-  "RetryImmediatelyAfterBadRequest": true
+  "RetryImmediatelyAfterBadRequest": true,
+  
+  "Threads":1,
+  "RetryCount":0
 }
 
 

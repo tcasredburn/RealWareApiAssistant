@@ -1,12 +1,12 @@
 ﻿{
   "ApiSettings": {
-    "ApiPath": "http://asrwiis/Test/EncompassAPI",
-    "Token": "MjAyNDA1OUMtQjU1QS00RUY0LTkxODItQzQ1QTk1MDMzMzND"
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
   },
   "ApiOperation": "/api/improvements/{accountNo}/{impNo}/{taxYear}",
   "Method": "PUT",
   
-  "ExcelFile": "script_1_data.xlsx",
+  "ExcelFile": "1-UpdateAccountsToCost_Data.xlsx",
   "IdColumns": [
     {
       "IdName": "{accountNo}",
@@ -18,7 +18,7 @@
     },
     {
       "IdName": "{taxYear}",
-      "StaticValue": "2022"
+      "StaticValue": "2023"
     }
   ],
   "ValueChanges": [
@@ -40,15 +40,19 @@
     {
 	  "Path": "",
 	  "RealWareColumn": "AppraisalDate",
-	  "ToValue": "6/7/2022"
+	  "ToValue": "6/27/2023"
     }
   ],
+  "ValueInserts": [],
 
 
   "CustomLogFileLocation": null,
   "SkipConfirmations": false,
   "SkipWarningPrompts": false,
-  "RetryImmediatelyAfterBadRequest": true
+  "RetryImmediatelyAfterBadRequest": true,
+  
+  "Threads":8,
+  "RetryCount":3
 }
 
 
