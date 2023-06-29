@@ -61,7 +61,8 @@ Utility for helping make calls to the RealWare Api using scripts. The scripting 
 	  "ExportJsonFiles": true,
 	  "FilePath": null
   },
-  "Threads": 6
+  "Threads": 6,
+  "RetryCount": 3
 }
 ```
 ### Understanding the Parts
@@ -161,7 +162,7 @@ SkipConfirmations - Skips any "Press Y to continue" prompts
 
 SkipWarningPrompts - "Skips any warning prompts that would halt the script to warn the user"
 
-RetryImmediatelyAfterBadRequest - If a request fails, retries for one time after 1000 milliseconds.
+RetryImmediatelyAfterBadRequest - If a GET request fails before the actual PUT or POST, the GET request will retry for one additional attempt after 1000 milliseconds.
 
 ForceExcelNULLValues - Allows the use of NULL. It will convert the value ```NULL``` into a ```null``` database value.
 
@@ -178,7 +179,11 @@ ExportJsonFiles - Enables file creation of every Json object to .json files in a
 FilePath - Leave blank to create a Json folder in the script location. Otherwise, specify a directory.
 
 ```json
-  "Threads": 6
+  "Threads": 6,
+  "RetryCount": 3
 ```
 
 Threads - Creates specified number of threads to complete the work. If not specified, the default is 1.
+
+RetryCount - The number of times the API call will retry if a failure occurs. If not specified, the default is 0.
+- Note: It is recommended to set this to 0 if you are doing multiple requests on the same identifier (for example, you have 3 different excel rows for the account 112233)
