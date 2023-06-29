@@ -1,0 +1,40 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
+  },
+  "ApiOperation": "/api/realproperty/{accountNo}/{taxYear}",
+  "Method": "PUT",
+  
+  "ExcelFile": "4-InsertAccountLandAbstracts_Data_A.xlsx",
+  "IdColumns": [
+	{
+      "IdName": "{accountNo}",
+      "ColumnValue": "ACCOUNTNO"
+    },
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2023"
+    }
+  ],
+  "ValueChanges": [
+	{
+	  "Path": "",
+      "RealWareColumn": "LandAbstracts",
+      "ToValue": "[]"
+    }
+  ],
+  "ValueInserts": [],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": true,
+  "SkipWarningPrompts": true,
+  "RetryImmediatelyAfterBadRequest": true,
+  
+  "Threads":8,
+  "RetryCount":2
+}
+
+
+

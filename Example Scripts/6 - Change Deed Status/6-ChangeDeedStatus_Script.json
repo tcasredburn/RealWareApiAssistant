@@ -1,0 +1,35 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
+  },
+  "ApiOperation": "/api/sales/{receptionNo}",
+  "Method": "PUT",
+  
+  "ExcelFile": "6-ChangeDeedStatus_Data.xlsx",
+  "IdColumns": [
+	{
+      "IdName": "{receptionNo}",
+      "ColumnValue": "RECEPTIONNO"
+    }
+  ],
+  "ValueChanges": [
+	{
+	  "Path": "",
+      "RealWareColumn": "SALEOM0",
+      "ExcelToColumn": "NEWSTATUS"
+    }
+  ],
+  "ValueInserts": [],
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": false,
+  "SkipWarningPrompts": false,
+  "RetryImmediatelyAfterBadRequest": true,
+  "ForceExcelNULLValues": true,
+  
+  "Threads":8
+}
+
+
+

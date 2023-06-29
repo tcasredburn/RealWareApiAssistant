@@ -1,0 +1,45 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
+  },
+  "ApiOperation": "/api/realproperty/{accountNo}/{taxYear}",
+  "Method": "PUT",
+  
+  "ExcelFile": "5-UpdateLatLon_Data.xlsx",
+  "IdColumns": [
+    {
+      "IdName": "{accountNo}",
+      "ColumnValue": "AccountNo"
+    },
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2023"
+    }
+  ],
+  "ValueChanges": [],
+  "ValueInserts": [
+  {
+      "Path": "Account.PropertyAddresses[0].GisCoordinate",
+      "RealwareColumn": "Latitude",
+      "ExcelToColumn": "LAT"
+    },
+	{
+      "Path": "Account.PropertyAddresses[0].GisCoordinate",
+      "RealwareColumn": "Longitude",
+      "ExcelToColumn": "LON"
+    }
+  ],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": true,
+  "SkipWarningPrompts": true,
+  "RetryImmediatelyAfterBadRequest": true,
+  
+  "Threads": 64,
+  "RetryCount":2
+}
+
+
+

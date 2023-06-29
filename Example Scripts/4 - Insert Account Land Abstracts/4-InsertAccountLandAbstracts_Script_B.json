@@ -1,0 +1,112 @@
+﻿{
+  "ApiSettings": {
+    "ApiPath": "{API url goes here}",
+    "Token": "{API user token goes here}"
+  },
+  "ApiOperation": "/api/realproperty/{accountNo}/{taxYear}",
+  "Method": "PUT",
+  
+  "ExcelFile": "4-InsertAccountLandAbstracts_Data_B.xlsx",
+  "IdColumns": [
+	{
+      "IdName": "{accountNo}",
+      "ColumnValue": "ACCOUNTNO"
+    },
+    {
+      "IdName": "{taxYear}",
+      "StaticValue": "2023"
+    }
+  ],
+  "ValueChanges": [],
+  "ValueInserts": [
+    {
+	  "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandSF",
+      "ExcelToColumn": "NET_SQFT"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandClass",
+      "ExcelToColumn": "CLASS"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandSubClass",
+      "ExcelToColumn": "SUBCLASS"
+    },	
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "TaxDistrict",
+      "ExcelToColumn": "SCHOOLDIST"
+    },
+
+
+	{
+	  "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandAcres",
+      "ToValue": "0.0"
+    },
+	{
+	  "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandFF",
+      "ToValue": "0.0"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "AbstractCode",
+      "ToValue": "300L"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandType",
+      "ToValue": "Agricultural"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandValueBy",
+      "ToValue": "Producing"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandactiveFlag",
+      "ToValue": "true"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandValueMeasure",
+      "ToValue": "Acres"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LEA",
+      "ToValue": "9200"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "LandOverrideFlag",
+      "ToValue": "false"
+    },
+	{
+      "Path": "LandAbstracts[0]",
+      "RealWareColumn": "AttributeAdjFlag",
+      "ToValue": "true"
+    },
+  ],
+
+
+  "CustomLogFileLocation": null,
+  "SkipConfirmations": true,
+  "SkipWarningPrompts": true,
+  "RetryImmediatelyAfterBadRequest": true,
+  
+  "ExportJsonSettings":{
+	  "ExportJsonFiles": true,
+	  "FilePath": null
+  },
+  
+  "Threads":1,
+  "RetryCount":2
+}
+
+
+
