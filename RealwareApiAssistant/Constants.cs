@@ -9,6 +9,7 @@
         public const int ExcelColumnWarningLimit = 50;
         public const int RetryRequestWaitTimeInMs = 1000;
         public const string ApplicationJsonParameter = "application/json";
+        public const string JsonFolderName = "Json";
 
         public const string ApplicationName = "Realware Api Assistant";
         public const string ApplicationVersion = "1.5.1";

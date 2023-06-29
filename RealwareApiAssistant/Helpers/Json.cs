@@ -35,7 +35,7 @@ namespace RealwareApiAssistant.Helpers
             List<ApiColumn> ids, Method method, string json, int index)
         {
             string name = method.ToString() + "_" + String.Join("_", ids.Select(x=>x.Value)) + $"_{index}" + ".json";
-            string fullPath = Path.Combine(settings.FilePath, "Json", name);
+            string fullPath = Path.Combine(settings.FilePath, Constants.JsonFolderName, name);
             try
             {
                 File.WriteAllText(fullPath, json);

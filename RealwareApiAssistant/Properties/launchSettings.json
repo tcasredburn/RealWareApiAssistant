@@ -1,8 +1,7 @@
 {
   "profiles": {
     "RealwareApiAssistant": {
-      "commandName": "Project",
-      "commandLineArgs": "\\\\asprint\\Departments\\Management_Information_Systems\\Batch\\Clear TIF from Property Address\\script_UpdatePropAddress_RemovePA7.json"
+      "commandName": "Project"
     }
   }
 }

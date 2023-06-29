@@ -1,4 +1,5 @@
-﻿using RealwareApiAssistant.Managers;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using RealwareApiAssistant.Managers;
 using RealwareApiAssistant.Models.IO;
 
 namespace RealwareApiAssistant.Helpers
@@ -76,10 +77,13 @@ namespace RealwareApiAssistant.Helpers
 #pragma warning disable CS8601 // Possible null reference assignment.
             if (string.IsNullOrWhiteSpace(script.ExportJsonSettings.FilePath))
                 script.ExportJsonSettings.FilePath = Path.GetDirectoryName(script.scriptFilePath);
-#pragma warning restore CS8601 // Possible null reference assignment.
 
-            if (!Directory.Exists(script.ExportJsonSettings.FilePath))
-                Directory.CreateDirectory(script.ExportJsonSettings.FilePath);
+#pragma warning disable CS8604 // Possible null reference argument.
+            string jsonFolder = Path.Combine(script.ExportJsonSettings.FilePath, Constants.JsonFolderName);
+#pragma warning restore CS8604 // Possible null reference argument.
+            if (!Directory.Exists(jsonFolder))
+                Directory.CreateDirectory(jsonFolder);
+#pragma warning restore CS8601 // Possible null reference assignment.
         }
 
         internal static bool ValidateScript(ConsoleManager console, ApiScript script)
