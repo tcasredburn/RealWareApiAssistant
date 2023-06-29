@@ -1,5 +1,5 @@
-# RealWareApiAssistant
-Utility for helping make calls to the RealWare Api using scripts. The scripting language is a unique and simple way to make updates to accounts, permits, sales, etc. in RealWare.
+# RealWare Api Assistant
+Utility for helping make calls to the RealWare Api using scripts. The scripting language is a unique and simple way to make updates to accounts, permits, sales, etc. in RealWare. This can be used to manually run or schedule a data import or update from an excel file to RealWare data.
 
 ## Creating a Script
 
