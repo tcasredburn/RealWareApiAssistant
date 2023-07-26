@@ -7,5 +7,6 @@
         public object FromValue { get; set; }
         public object ToValue { get; set; }
         public bool IsNew { get; set; }
+        public bool ValueIsJson { get; set; }
     }
 }

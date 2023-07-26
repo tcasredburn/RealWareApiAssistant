@@ -143,6 +143,7 @@ namespace RealwareApiAssistant.Managers
                             RealwarePropertyName = change.RealWareColumn,
                             FromValue = change.FromValue,
                             ToValue = getToValue(change.ToValue),
+                            ValueIsJson = change.ValueIsJson,
                             IsNew = false
                         });
                     }
@@ -167,6 +168,7 @@ namespace RealwareApiAssistant.Managers
                             RealwarePropertyName = insert.RealWareColumn,
                             FromValue = insert.FromValue,
                             ToValue = getToValue(insert.ToValue),
+                            ValueIsJson = insert.ValueIsJson,
                             IsNew = true
                         });
                     }
@@ -216,7 +218,8 @@ namespace RealwareApiAssistant.Managers
                         Path = valueChange.Path,
                         RealwarePropertyName = valueChange.RealWareColumn,
                         FromValue = valueChange.FromValue,
-                        ToValue = valueChange.ToValue
+                        ToValue = valueChange.ToValue,
+                        ValueIsJson = valueChange.ValueIsJson
                     });
                 }
             }
@@ -231,7 +234,8 @@ namespace RealwareApiAssistant.Managers
                         RealwarePropertyName = valueInsert.RealWareColumn,
                         FromValue = valueInsert.FromValue,
                         ToValue = valueInsert.ToValue,
-                        IsNew = true
+                        IsNew = true,
+                        ValueIsJson = valueInsert.ValueIsJson
                     });
                 }
             }
@@ -423,7 +427,7 @@ namespace RealwareApiAssistant.Managers
             JToken? jsonData = null;
             if (json != null)
                 jsonData = JToken.Parse(json.ToString());
-
+            
             // Changes
             int totalChangeCount = change.Values.Where(x => !x.IsNew).Count();
             if (jsonData != null)
@@ -439,7 +443,12 @@ namespace RealwareApiAssistant.Managers
                                     || column.FromValue == null)
                         {
                             valueChanges++;
-                            if(column.ToValue?.ToString() == "[]")
+                            if(column.ValueIsJson)
+                            {
+                                var cleanJsonObject = JsonConvert.DeserializeObject<dynamic>(column.ToValue?.ToString());
+                                jToken[column.RealwarePropertyName] = cleanJsonObject;
+                            }
+                            else if(column.ToValue?.ToString() == "[]")
                                 jToken[column.RealwarePropertyName] = new JArray(); 
                             else
                                 jToken[column.RealwarePropertyName] = column.ToValue?.ToString();
