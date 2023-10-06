@@ -540,7 +540,24 @@ namespace RealwareApiAssistant.Managers
                                         }
                                         else
                                         {
-                                            cellValue = c.CellValue != null ? c.CellValue.InnerText : "";
+                                            // Fixes weird number issues with data being formatted in an odd way from Excel
+                                            if (c.CellValue != null)
+                                            {
+                                                string innerText = c.CellValue.InnerText;
+                                                if (double.TryParse(innerText, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double numVal))
+                                                {
+                                                    cellValue = numVal.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
+                                                }
+                                                else
+                                                {
+                                                    cellValue = innerText;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                cellValue = "";
+                                            }
+
                                         }
                                         rowData.Add(cellValue);
                                     }
