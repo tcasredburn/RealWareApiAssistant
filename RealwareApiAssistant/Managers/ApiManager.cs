@@ -50,12 +50,26 @@ namespace RealwareApiAssistant.Managers
             List<string> columns = new List<string>();
             List<List<string>> rows = new List<List<string>>();
 
+            // Read in the column listing row
+            // Note: this error can occur reading the data since this is the first instance it is being referenced.
+            List<string> columnRow;
+            try
+            {
+                console.WriteLog($"Processing column header row...");
+                columnRow = fileData.First();
+            }
+            catch (IOException exFileInUse)
+            {
+                console.WriteErrorWithDetails("Excel file is open", exFileInUse.Message);
+                return null;
+            }
+
             //Column only row
-            var columnRow = fileData.First();
-            foreach(var cell in columnRow.ToList())
+            foreach (var cell in columnRow.ToList())
             {
                 columns.Add(cell);
             }
+            console.WriteLog($"Processed {columns.Count} columns.");
 
             if (promptColumnsUsed(columns.Count))
                 return null;
