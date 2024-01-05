@@ -10,15 +10,14 @@
         private string logFileName;
         private static Mutex logFileMutex = new Mutex();
 
-        public ConsoleManager(string logFilePath)
+        public ConsoleManager()
         {
-            this.logFilePath = logFilePath;
-            SetLogFileLocation(logFilePath);
+            SetLogFileLocation(string.Empty);
         }
 
         public void SetLogFileLocation(string logFilePath)
         {
-            logFileName = string.Format(logFilePath, DateTime.Now.ToString(Constants.LogFileDateFormat));
+            logFileName = Path.Join(logFilePath, string.Format(Constants.LogFileName, DateTime.Now.ToString(Constants.LogFileDateFormat)));
 
             var logFile = File.CreateText(logFileName);
 

@@ -10,7 +10,7 @@ class Program
         Console.Title = $"{Constants.ApplicationName} - V{Constants.ApplicationVersion} - {scriptPath}";
 
         //1 - Start
-        var console = new ConsoleManager(Constants.LogFileName);
+        var console = new ConsoleManager();
         console.WriteLog(DateTime.Now.ToString());
         console.WriteLog($"Starting Realware API Assistant V{Constants.ApplicationVersion}...");
 
