@@ -190,6 +190,8 @@ namespace RealwareApiAssistant.Helpers
                     console.WriteMissingSettingValueChangeText(index, nameof(valueChange.RealWareColumn));
                 if (valueChange.ToValue == null && string.IsNullOrWhiteSpace(valueChange.ExcelToColumn))
                     console.WriteWarning($"Value {type} at position {index} is missing columns '{nameof(valueChange.ToValue)}' and '{nameof(valueChange.ExcelToColumn)}'.");
+                if(valueChange.ToValue != null && valueChange.ValueIsNumeric && !double.TryParse(valueChange.ToValue.ToString(), out _))
+                    console.WriteError($"Value {type} at position {index} is not numeric: {valueChange.ToValue}.");
                 index++;
             }
         }

@@ -9,5 +9,6 @@
         public object FromValue { get; set; }
         public object ToValue { get; set; }
         public bool ValueIsJson { get; set; } = false;
+        public bool ValueIsNumeric { get; set; } = true;
     }
 }

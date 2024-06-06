@@ -146,17 +146,17 @@ namespace RealwareApiAssistant.Managers
                     foreach (var change in changes)
                     {
                         if (change.ExcelFromColumn != null && change.ExcelFromColumn == columnName)
-                            change.FromValue = getToValue(value);
+                            change.FromValue = getToValue(value, change.ValueIsNumeric);
 
                         if (change.ExcelToColumn != null && change.ExcelToColumn == columnName)
-                            change.ToValue = getToValue(value);
+                            change.ToValue = getToValue(value, change.ValueIsNumeric);
 
                         request.Values.Add(new ApiValue()
                         {
                             Path = change.Path,
                             RealwarePropertyName = change.RealWareColumn,
                             FromValue = change.FromValue,
-                            ToValue = getToValue(change.ToValue),
+                            ToValue = getToValue(change.ToValue, change.ValueIsNumeric),
                             ValueIsJson = change.ValueIsJson,
                             IsNew = false
                         });
@@ -171,17 +171,17 @@ namespace RealwareApiAssistant.Managers
                     foreach(var insert in inserts)
                     {
                         if (insert.ExcelFromColumn != null && insert.ExcelFromColumn == columnName)
-                            insert.FromValue = getToValue(value);
+                            insert.FromValue = getToValue(value, insert.ValueIsNumeric);
 
                         if (insert.ExcelToColumn != null && insert.ExcelToColumn == columnName)
-                            insert.ToValue = getToValue(value);
+                            insert.ToValue = getToValue(value, insert.ValueIsNumeric);
 
                         request.Values.Add(new ApiValue()
                         {
                             Path = insert.Path,
                             RealwarePropertyName = insert.RealWareColumn,
                             FromValue = insert.FromValue,
-                            ToValue = getToValue(insert.ToValue),
+                            ToValue = getToValue(insert.ToValue, insert.ValueIsNumeric),
                             ValueIsJson = insert.ValueIsJson,
                             IsNew = true
                         });
@@ -255,7 +255,7 @@ namespace RealwareApiAssistant.Managers
             }
         }
 
-        private object getToValue(object toValue)
+        private object getToValue(object toValue, bool isNumeric)
         {
             if (toValue == null)
                 return null;
@@ -264,6 +264,13 @@ namespace RealwareApiAssistant.Managers
             {
                 if (toValue.ToString() == "NULL")
                     return null;
+            }
+
+            if(isNumeric)
+            {
+                if (double.TryParse(toValue.ToString(), System.Globalization.NumberStyles.Float, 
+                    System.Globalization.CultureInfo.InvariantCulture, out double numVal))
+                    return numVal;
             }
 
             return toValue;
